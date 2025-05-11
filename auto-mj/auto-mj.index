@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hướng Dẫn Sử Dụng Auto Midjourney</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex; /* Added for vertical nav layout */
+        }
+        /* New Nav Styles for Vertical Layout */
+        nav#navbar { /* Targeting the specific nav element */
+            width: 220px; /* Width of the vertical nav */
+            background-color: #444;
+            padding-top: 20px; /* Add some padding at the top */
+            height: 100vh; /* Full height */
+            position: fixed; /* Sticky sidebar */
+            top: 0;
+            left: 0;
+            overflow-y: auto; /* Scroll if content overflows */
+            z-index: 1000;
+        }
+        nav#navbar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav#navbar ul li {
+            /* display: inline; Remove for vertical */
+            /* margin-right: 20px; Remove for vertical */
+        }
+        nav#navbar ul li a {
+            display: block; /* Make links block for full-width click area */
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px 20px; /* Padding for links */
+            text-align: left;
+        }
+        nav#navbar ul li a:hover,
+        nav#navbar ul li a.active-link { /* Combined hover and active */
+            background-color: #5cb85c; /* Highlight color */
+            text-decoration: none;
+        }
+        nav#navbar ul li a.has-submenu::after { /* Arrow for expandable menus */
+            content: ' ▼'; /* Down arrow */
+            font-size: 0.8em;
+            float: right;
+        }
+        nav#navbar ul li a.has-submenu.open::after {
+            content: ' ▲'; /* Up arrow */
+        }
+        nav#navbar ul ul.submenu {
+            list-style-type: none;
+            padding-left: 20px; /* Indentation for sub-menu */
+            display: none; /* Hidden by default */
+            background-color: #3a3a3a; /* Slightly different background for submenu block */
+        }
+        nav#navbar ul ul.submenu.open {
+            display: block; /* Show when open */
+        }
+        nav#navbar ul ul.submenu li a {
+            padding: 8px 20px; /* Smaller padding for sub-items */
+            font-size: 0.9em;
+            font-weight: normal; /* Less emphasis than main items */
+        }
+        nav#navbar ul ul.submenu li a:hover,
+        nav#navbar ul ul.submenu li a.active-link {
+            background-color: #555; /* Different hover/active for sub-items */
+        }
+
+        .container {
+            margin-left: 220px; /* Adjust to be nav width */
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            flex-grow: 1; /* Allow container to take remaining space */
+            /* width: calc(100% - 220px); Remove fixed width, use flex-grow */
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem 0;
+            text-align: center;
+            /* Header is now part of .container, so it will be to the right of nav */
+        }
+        header h1 {
+            margin: 0;
+            padding: 0;
+        }
+        /* Old nav styles will be removed by not being included or by a specific removal block if necessary */
+        section {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        section:last-child {
+            border-bottom: none;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #5cb85c;
+            padding-bottom: 5px;
+        }
+        h3 {
+            color: #555;
+        }
+        code {
+            background-color: #eee;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+        }
+        pre {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .config-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .config-table th, .config-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .config-table th {
+            background-color: #f0f0f0;
+        }
+        .note {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-left: 6px solid #ffc107;
+            padding: 10px;
+            margin: 15px 0;
+        }
+        .highlight {
+            font-weight: bold;
+            color: #d9534f;
+        }
+        ul, ol {
+            margin-left: 20px;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header has been moved inside the .container div -->
+
+    <nav id="navbar">
+        <ul>
+            <li><a href="#gioi-thieu">1. Giới Thiệu</a></li>
+            <li>
+                <a href="#cai-dat" class="has-submenu">2. Cài Đặt & Chuẩn Bị</a>
+                <ul class="submenu">
+                    <li><a href="#cai-dat-yeu-cau">2.1. Yêu Cầu Hệ Thống</a></li>
+                    <li><a href="#cai-dat-thu-vien">2.2. Cài Đặt Thư Viện</a></li>
+                    <li><a href="#cai-dat-file">2.3. Chuẩn Bị File</a></li>
+                    <li><a href="#cai-dat-ban-dau">2.4. Cấu Hình Ban Đầu</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#giao-dien-chinh" class="has-submenu">3. Giao Diện Chính</a>
+                <ul class="submenu">
+                    <li><a href="#gd-dieu-khien">3.1. Khu Vực Điều Khiển</a></li>
+                    <li><a href="#gd-start-options">3.2. Tùy Chọn Bắt Đầu</a></li>
+                    <li><a href="#gd-trang-thai">3.3. Hiển Thị Trạng Thái</a></li>
+                    <li><a href="#gd-nut-khac">3.4. Nút Chức Năng Khác</a></li>
+                    <li><a href="#gd-log">3.5. Khu Vực Log</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#cau-hinh" class="has-submenu">4. Cấu Hình Chi Tiết</a>
+                <ul class="submenu">
+                    <li><a href="#ch-auto-mj">4.1. Config Auto MJ</a></li>
+                    <li><a href="#ch-like-human">4.2. Config Like Human</a></li>
+                    <li><a href="#ch-warm-up">4.3. Warm-Up Config</a></li>
+                    <li><a href="#ch-json-file">4.4. File midjourney_config.json</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#quan-ly-proxy" class="has-submenu">5. Quản Lý Proxy</a>
+                <ul class="submenu">
+                    <li><a href="#proxy-cau-hinh-sd">5.1. Cấu Hình Sử Dụng</a></li>
+                    <li><a href="#proxy-import">5.2. Import Proxy</a></li>
+                    <li><a href="#proxy-bang-import">5.3. Bảng Proxy Vừa Import</a></li>
+                    <li><a href="#proxy-bang-db">5.4. Bảng Proxy Trong DB</a></li>
+                </ul>
+            </li>
+            <li><a href="#luu-y">6. Lưu Ý Quan Trọng</a></li>
+            <li>
+                <a href="#kich-ban-su-dung" class="has-submenu">7. Kịch Bản Sử Dụng</a>
+                <ul class="submenu">
+                    <li><a href="#kb-co-ban">7.1. Batch Prompt Cơ Bản</a></li>
+                    <li><a href="#kb-nang-cao">7.2. Số Lượng Lớn (Proxy, Profile)</a></li>
+                    <li><a href="#kb-em">7.3. Chạy "Êm" (Mô Phỏng Tối Đa)</a></li>
+                    <li><a href="#kb-tiep-tuc">7.4. Tiếp Tục Phiên Gián Đoạn</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <header>
+            <h1>Hướng Dẫn Sử Dụng Phần Mềm Auto Midjourney</h1>
+        </header>
+        <section id="gioi-thieu">
+            <h2>1. Giới Thiệu Chung</h2>
+            <p>Phần mềm Auto Midjourney được thiết kế để tự động hóa quá trình gửi prompt (câu lệnh) lên Midjourney. Nó cung cấp nhiều tính năng tùy chỉnh để mô phỏng hành vi người dùng, quản lý tài khoản Chrome, sử dụng proxy, và xử lý CAPTCHA, giúp quá trình tự động hóa diễn ra mượt mà và hiệu quả hơn.</p>
+            <p>Các tính năng chính bao gồm:</p>
+            <ul>
+                <li>Tự động gửi prompt từ file CSV.</li>
+                <li>Quản lý và tùy chỉnh cấu hình chi tiết cho từng phiên làm việc.</li>
+                <li>Mô phỏng hành vi người dùng (gõ phím, cuộn chuột, điều hướng ngẫu nhiên).</li>
+                <li>Quản lý profile Chrome (tạo mới, sử dụng profile có sẵn, xóa profile).</li>
+                <li>Tính năng "warm-up" profile mới.</li>
+                <li>Quản lý Proxy Pool (import, test, lưu trữ proxy).</li>
+                <li>Xử lý CAPTCHA (tạm dừng, xoay vòng worker).</li>
+                <li>Ghi log chi tiết quá trình hoạt động.</li>
+            </ul>
+        </section>
+
+        <section id="cai-dat">
+            <h2>2. Cài Đặt và Chuẩn Bị</h2>
+            <h3 id="cai-dat-yeu-cau">2.1. Yêu Cầu Hệ Thống</h3>
+            <ul>
+                <li>Hệ điều hành: Windows, macOS, hoặc Linux.</li>
+                <li>Python 3.x.</li>
+                <li>Trình duyệt Google Chrome đã được cài đặt.</li>
+            </ul>
+
+            <h3 id="cai-dat-thu-vien">2.2. Cài Đặt Thư Viện</h3>
+            <p>Phần mềm sử dụng một số thư viện Python. Bạn cần cài đặt chúng bằng cách chạy lệnh sau trong terminal hoặc command prompt (đảm bảo bạn đang ở trong thư mục gốc của phần mềm):</p>
+            <pre><code>pip install -r requirements.txt</code></pre>
+            <p>Nội dung file <code>requirements.txt</code> thường bao gồm:</p>
+            <pre>
+pandas
+requests
+undetected-chromedriver
+selenium
+            </pre>
+            <p class="note">Lưu ý: <code>undetected-chromedriver</code> sẽ tự động tải về phiên bản ChromeDriver phù hợp với phiên bản Chrome của bạn. Tuy nhiên, bạn có thể chỉ định phiên bản Chrome chính trong file cấu hình nếu cần.</p>
+
+            <h3 id="cai-dat-file">2.3. Chuẩn Bị File Cần Thiết</h3>
+            <ul>
+                <li><strong>File Prompts (CSV):</strong>
+                    <p>Tạo một file CSV (ví dụ: <code>prompts.csv</code>) chứa danh sách các prompt bạn muốn gửi. File này cần có ít nhất cột <code>prompt</code>. Các cột khác như <code>status</code>, <code>timestamp</code>, <code>loop</code> sẽ được phần mềm tự động tạo và cập nhật.</p>
+                    <p>Ví dụ cấu trúc file <code>prompts.csv</code>:</p>
+<pre>
+prompt,status,timestamp,loop
+"a beautiful landscape painting, hyperrealistic, 4k",,,
+"a cute cat wearing a tiny hat, photographic",,,
+</pre>
+                </li>
+                <li><strong>File Cookies (JSON):</strong>
+                    <p>Để tự động đăng nhập vào Midjourney, bạn cần cung cấp file cookies. Bạn có thể lấy file này từ trình duyệt sau khi đã đăng nhập vào Midjourney. Có nhiều extension trình duyệt giúp bạn export cookies (ví dụ: Get cookies.txt, EditThisCookie).</p>
+                    <p>Lưu cookies dưới dạng file JSON (ví dụ: <code>cookies_midjourney.json</code>) và cập nhật đường dẫn đến file này trong phần cấu hình của phần mềm.</p>
+                </li>
+                <li><strong>(Tùy chọn) File Proxy (CSV/TXT):</strong>
+                    <p>Nếu bạn muốn sử dụng proxy, chuẩn bị file chứa danh sách proxy. Xem chi tiết định dạng ở mục <a href="#quan-ly-proxy">Quản Lý Proxy</a>.</p>
+                </li>
+            </ul>
+             <h3 id="cai-dat-ban-dau">2.4. Cấu Hình Ban Đầu (<code>midjourney_config.json</code>)</h3>
+            <p>Trước khi chạy lần đầu, hãy xem qua file <code>midjourney_config.json</code>. Các mục quan trọng cần chú ý:</p>
+            <ul>
+                <li><code>midjourney_cookies_file</code>: Đường dẫn đến file cookies JSON của bạn.</li>
+                <li><code>prompts_file_path</code>: Đường dẫn đến file CSV chứa prompts.</li>
+                <li><code>chrome_profiles_dir</code>: Thư mục để lưu trữ các profile Chrome được tạo tự động. Đảm bảo đường dẫn này hợp lệ và phần mềm có quyền ghi vào đó.</li>
+                <li><code>chrome_profile_path</code>: (Nếu không dùng auto-create) Đường dẫn đến một profile Chrome có sẵn mà bạn muốn sử dụng.</li>
+            </ul>
+            <p>Các cấu hình khác sẽ được giải thích chi tiết ở các mục sau.</p>
+        </section>
+
+        <section id="giao-dien-chinh">
+            <h2>3. Giao Diện Chính (<code>auto_midjourney_gui.py</code>)</h2>
+            <p>Khi chạy file <code>main.py</code>, giao diện chính của ứng dụng sẽ xuất hiện. Giao diện này bao gồm các khu vực chính sau:</p>
+
+            <h3 id="gd-dieu-khien">3.1. Khu Vực Điều Khiển Auto Midjourney</h3>
+            <img src="placeholder_gui_main_controls.png" alt="Main Controls Area - Placeholder Image">
+            <ul>
+                <li><strong>Config Auto MJ:</strong> Mở cửa sổ cấu hình chi tiết cho các thông số liên quan trực tiếp đến việc chạy Midjourney (đường dẫn file, profile, các loại delay cơ bản, v.v.).</li>
+                <li><strong>Config Like Human:</strong> Mở cửa sổ cấu hình các tùy chọn giúp bot hoạt động giống người hơn (user-agent, kích thước cửa sổ, cuộn chuột, điều hướng ngẫu nhiên).</li>
+                <li><strong>Warm-Up Config:</strong> Mở cửa sổ cấu hình cho quá trình "làm nóng" profile Chrome mới (truy cập các trang web, tìm kiếm Google).</li>
+                <li><strong>Start Auto MJ:</strong> Bắt đầu quá trình tự động gửi prompt.</li>
+                <li><strong>Stop Auto MJ:</strong> Dừng quá trình đang chạy.</li>
+            </ul>
+
+            <h3 id="gd-start-options">3.2. Tùy Chọn Bắt Đầu (Start Options)</h3>
+            <img src="placeholder_gui_start_options.png" alt="Start Options Area - Placeholder Image">
+            <ul>
+                <li><strong>Start Mode:</strong>
+                    <ul>
+                        <li><code>Continue Pending Prompts</code>: Tiếp tục từ prompt cuối cùng chưa được xử lý (dựa vào cột 'status' trong file CSV).</li>
+                        <li><code>Start From Beginning</code>: Bắt đầu từ đầu file prompts.</li>
+                        <li><code>Start From Line</code>: Bắt đầu từ một dòng cụ thể trong file prompts.</li>
+                    </ul>
+                </li>
+                <li><strong>Line:</strong> (Chỉ hiển thị khi chọn "Start From Line") Số dòng bắt đầu.</li>
+                <li><strong>Loop Count:</strong> Số lần lặp lại toàn bộ danh sách prompts.</li>
+                <li><strong>Max Prompts:</strong> Tổng số prompt tối đa sẽ được xử lý trong toàn bộ phiên chạy (bao gồm tất cả các vòng lặp và worker). 0 nghĩa là không giới hạn.</li>
+                <li><strong>Run browser in background (headless):</strong> Chạy trình duyệt Chrome ở chế độ ẩn (không hiển thị cửa sổ trình duyệt).</li>
+            </ul>
+
+            <h3 id="gd-trang-thai">3.3. Hiển Thị Trạng Thái</h3>
+            <img src="placeholder_gui_status_display.png" alt="Status Display Area - Placeholder Image">
+            <ul>
+                <li><strong>Progress:</strong> Tiến trình xử lý prompt hiện tại của worker (ví dụ: 1/100).</li>
+                <li><strong>Prompt:</strong> Nội dung prompt đang được xử lý (hiển thị một phần nếu quá dài).</li>
+                <li><strong>Step:</strong> Bước hiện tại của worker (ví dụ: Initializing, Typing prompt, Waiting for delay).</li>
+                <li><strong>Delay:</strong> Thời gian chờ hiện tại (nếu có).</li>
+                <li><strong>Loop:</strong> Vòng lặp hiện tại (ví dụ: Loop: 1/3).</li>
+                <li><strong>CAPTCHA Count:</strong> Số lần CAPTCHA đã gặp trong phiên làm việc hiện tại.</li>
+            </ul>
+
+            <h3 id="gd-nut-khac">3.4. Các Nút Chức Năng Khác</h3>
+            <img src="placeholder_gui_other_buttons.png" alt="Other Buttons Area - Placeholder Image">
+            <ul>
+                <li><strong>Proxy Pool:</strong> Mở cửa sổ quản lý danh sách proxy.</li>
+                <li><strong>Xóa File Log App:</strong> Xóa nội dung file <code>app.log</code>.</li>
+            </ul>
+
+            <h3 id="gd-log">3.5. Khu Vực Log (Status & Logs)</h3>
+            <img src="placeholder_gui_log_area.png" alt="Log Area - Placeholder Image">
+            <p>Hiển thị các thông báo log chi tiết về quá trình hoạt động của phần mềm. Các log này cũng được ghi vào file <code>app.log</code>.</p>
+            <ul>
+                <li><strong>Clear Log Hiển Thị:</strong> Xóa log đang hiển thị trên giao diện (không xóa file <code>app.log</code>).</li>
+            </ul>
+        </section>
+
+        <section id="cau-hinh">
+            <h2>4. Cấu Hình Chi Tiết</h2>
+            <p>Phần mềm cho phép tùy chỉnh sâu thông qua các cửa sổ cấu hình và file <code>midjourney_config.json</code>.</p>
+
+            <h3 id="ch-auto-mj">4.1. Cửa Sổ "Config Auto MJ" (<code>midjourney_config_window.py</code>)</h3>
+            <p>Cửa sổ này quản lý các cài đặt cốt lõi cho việc chạy Auto Midjourney.</p>
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Mục Cấu Hình</th>
+                        <th>Mô Tả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Chrome Profile</strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Profiles Directory</td>
+                        <td>Thư mục cha chứa tất cả các profile Chrome (bao gồm cả profile tạo tự động và profile có sẵn).</td>
+                    </tr>
+                    <tr>
+                        <td>Current Profile Path</td>
+                        <td>Đường dẫn đến một profile Chrome cụ thể bạn muốn sử dụng. Sẽ bị bỏ qua nếu "Tự động tạo Profile mới..." được chọn.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Prompts File Configuration</strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Prompts File Path</td>
+                        <td>Đường dẫn đến file CSV chứa danh sách prompts.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Worker & Cookies Configuration</strong></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Cookies File (JSON)</td>
+                        <td>Đường dẫn đến file JSON chứa cookies của Midjourney.</td>
+                    </tr>
+                    <tr>
+                        <td>Max Prompts per Worker</td>
+                        <td>Số lượng prompt tối đa một worker (một instance trình duyệt) sẽ xử lý trước khi có thể được xoay vòng (nếu cấu hình xoay vòng được bật). 0 nghĩa là không giới hạn cho worker đó.</td>
+                    </tr>
+                    <tr>
+                        <td>Tự động tạo Profile mới cho mỗi Worker</td>
+                        <td>Nếu được chọn, mỗi khi một worker mới bắt đầu (ví dụ khi khởi động hoặc xoay vòng), một profile Chrome mới sẽ được tạo trong "Profiles Directory". Nếu không chọn, phần mềm sẽ sử dụng "Current Profile Path".</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Page Reload Behavior</strong></td>
+                        <td>Chiến lược tải lại trang Midjourney.</td>
+                    </tr>
+                    <tr>
+                        <td>Reload Strategy</td>
+                        <td><ul><li><code>Luôn tải lại (Mỗi prompt)</code>: Tải lại trang trước mỗi prompt.</li><li><code>Tải lại ngẫu nhiên (Sau X-Y prompts)</code>: Tải lại trang sau một số lượng prompt ngẫu nhiên trong khoảng Min-Max đã định.</li></ul></td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max Prompts before Reload</td>
+                        <td>(Chỉ áp dụng cho chiến lược ngẫu nhiên) Số prompt tối thiểu/tối đa trước khi tải lại trang.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CAPTCHA Handling Strategy</strong></td>
+                        <td>Cách phần mềm phản ứng khi gặp CAPTCHA.</td>
+                    </tr>
+                    <tr>
+                        <td>Pause Duration (minutes)</td>
+                        <td>Thời gian (phút) hệ thống sẽ tạm dừng sau khi phát hiện CAPTCHA trước khi thử lại (nếu giới hạn CAPTCHA chưa đạt).</td>
+                    </tr>
+                    <tr>
+                        <td>Max CAPTCHAs per Session</td>
+                        <td>Số lần CAPTCHA tối đa được phép gặp trong một phiên chạy. Nếu vượt quá, toàn bộ quá trình sẽ dừng lại.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Profile Management (Actions)</strong></td>
+                        <td>Các nút thao tác trực tiếp với profile Chrome.</td>
+                    </tr>
+                    <tr>
+                        <td>New Profile Name</td>
+                        <td>Tên cho profile mới muốn tạo (để trống sẽ tự tạo tên ngẫu nhiên).</td>
+                    </tr>
+                    <tr>
+                        <td>Create Profile</td>
+                        <td>Tạo profile mới trong "Profiles Directory".</td>
+                    </tr>
+                    <tr>
+                        <td>Open Current Profile</td>
+                        <td>Mở trình duyệt Chrome với profile được chỉ định ở "Current Profile Path".</td>
+                    </tr>
+                    <tr>
+                        <td>Delete Current Profile</td>
+                        <td>Xóa profile được chỉ định ở "Current Profile Path" (có xác nhận).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Delay Configuration</strong></td>
+                        <td>Thời gian chờ giữa các hành động.</td>
+                    </tr>
+                    <tr>
+                        <td>Page Load Timeout (s)</td>
+                        <td>Thời gian tối đa chờ một trang web tải xong.</td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max Typing Delay (s)</td>
+                        <td>Thời gian chờ tối thiểu/tối đa giữa mỗi ký tự khi gõ prompt.</td>
+                    </tr>
+                    <tr>
+                        <td>Post Load Delay (s)</td>
+                        <td>Thời gian chờ sau khi trang đã tải xong các yếu tố cơ bản.</td>
+                    </tr>
+                    <tr>
+                        <td>Pre Submit Delay (s)</td>
+                        <td>Thời gian chờ ngay trước khi nhấn Enter để gửi prompt.</td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max Post Submit Delay (s)</td>
+                        <td>Thời gian chờ tối thiểu/tối đa sau khi đã gửi prompt.</td>
+                    </tr>
+                    <tr>
+                        <td>Reset to Default Values</td>
+                        <td>Khôi phục tất cả các giá trị delay về mặc định.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="note">Nút "Save Config" sẽ lưu các thay đổi vào file <code>midjourney_config.json</code>.</p>
+
+            <h3 id="ch-like-human">4.2. Cửa Sổ "Config Like Human" (<code>human_like_config_window.py</code>)</h3>
+            <p>Cửa sổ này tập trung vào các cài đặt giúp hành vi của bot trở nên tự nhiên hơn, giảm khả năng bị phát hiện.</p>
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Mục Cấu Hình</th>
+                        <th>Mô Tả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Browser Fingerprinting</strong></td>
+                        <td>Thay đổi các đặc điểm của trình duyệt.</td>
+                    </tr>
+                    <tr>
+                        <td>Enable Random User-Agent</td>
+                        <td>Nếu chọn, mỗi worker sẽ sử dụng một User-Agent ngẫu nhiên từ danh sách bên dưới.</td>
+                    </tr>
+                    <tr>
+                        <td>User-Agents (one per line)</td>
+                        <td>Danh sách các chuỗi User-Agent.</td>
+                    </tr>
+                    <tr>
+                        <td>Enable Random Window Size</td>
+                        <td>Nếu chọn, mỗi worker sẽ sử dụng một kích thước cửa sổ ngẫu nhiên từ danh sách.</td>
+                    </tr>
+                    <tr>
+                        <td>Window Sizes (e.g., 1920,1080 - one per line)</td>
+                        <td>Danh sách các kích thước cửa sổ (rộng,cao).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Random Scrolling Behavior</strong></td>
+                        <td>Mô phỏng hành vi cuộn chuột.</td>
+                    </tr>
+                    <tr>
+                        <td>Enable Random Scrolling</td>
+                        <td>Bật/tắt toàn bộ tính năng cuộn chuột ngẫu nhiên.</td>
+                    </tr>
+                    <tr>
+                        <td>Scroll After Page Load</td>
+                        <td>Cuộn chuột sau khi trang tải xong.</td>
+                    </tr>
+                    <tr>
+                        <td>Scroll Before Typing Prompt</td>
+                        <td>Cuộn chuột trước khi bắt đầu gõ prompt.</td>
+                    </tr>
+                    <tr>
+                        <td>Scroll During Post-Submit Delay</td>
+                        <td>Cuộn chuột trong thời gian chờ sau khi gửi prompt.</td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max Scroll Amount (px)</td>
+                        <td>Số pixel cuộn tối thiểu/tối đa (âm để cuộn lên, dương để cuộn xuống).</td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max Scroll Actions</td>
+                        <td>Số lần thực hiện hành động cuộn mỗi khi được kích hoạt.</td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max Pause (s)</td>
+                        <td>Thời gian dừng tối thiểu/tối đa giữa các lần cuộn.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Diversified Navigation</strong></td>
+                        <td>Truy cập ngẫu nhiên các trang khác trên Midjourney.</td>
+                    </tr>
+                    <tr>
+                        <td>Enable Diversified Navigation</td>
+                        <td>Bật/tắt tính năng này.</td>
+                    </tr>
+                    <tr>
+                        <td>Navigation Frequency (%)</td>
+                        <td>Tỷ lệ % cơ hội thực hiện điều hướng ngẫu nhiên trước mỗi prompt.</td>
+                    </tr>
+                    <tr>
+                        <td>Navigation URLs (one per line)</td>
+                        <td>Danh sách các URL trên Midjourney để truy cập ngẫu nhiên (ví dụ: trang explore, archive).</td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max View Time (s)</td>
+                        <td>Thời gian tối thiểu/tối đa dành cho mỗi trang được điều hướng đến.</td>
+                    </tr>
+                     <tr>
+                        <td><strong>Random Entry Points</strong></td>
+                        <td>Sử dụng các URL khác nhau để truy cập trang "imagine" của Midjourney.</td>
+                    </tr>
+                    <tr>
+                        <td>Sử dụng Entry Point Ngẫu nhiên</td>
+                        <td>Nếu được chọn, phần mềm sẽ chọn ngẫu nhiên một URL từ danh sách bên dưới để vào trang gửi prompt, thay vì luôn dùng URL mặc định.</td>
+                    </tr>
+                    <tr>
+                        <td>Danh sách Entry Point URLs</td>
+                        <td>Các URL có thể dẫn đến trang "imagine" của Midjourney.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="note">Nút "Save & Close" sẽ lưu các thay đổi vào file <code>midjourney_config.json</code>.</p>
+
+            <h3 id="ch-warm-up">4.3. Cửa Sổ "Warm-Up Config" (<code>warmup_config_window.py</code>)</h3>
+            <p>Cấu hình quá trình "làm nóng" cho các profile Chrome mới được tạo tự động. Mục đích là để profile có một số hoạt động duyệt web cơ bản trước khi bắt đầu các tác vụ chính.</p>
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Mục Cấu Hình</th>
+                        <th>Mô Tả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Enable Profile Warm-up</td>
+                        <td>Bật/tắt tính năng làm nóng profile. <span class="highlight">Lưu ý:</span> Tính năng này thường chỉ áp dụng cho các profile được tạo tự động (khi "Tự động tạo Profile mới..." được bật trong Config Auto MJ).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Site Visit Settings</strong></td>
+                        <td>Cài đặt cho việc truy cập các trang web ngẫu nhiên.</td>
+                    </tr>
+                    <tr>
+                        <td>Sites to Visit (one per line)</td>
+                        <td>Danh sách các URL trang web để truy cập.</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Sites to Visit</td>
+                        <td>Số lượng trang web sẽ được chọn ngẫu nhiên từ danh sách trên để truy cập.</td>
+                    </tr>
+                    <tr>
+                        <td>Min/Max View Time (s)</td>
+                        <td>Thời gian tối thiểu/tối đa dành cho mỗi trang web được truy cập.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Google Search Settings</strong></td>
+                        <td>Cài đặt cho việc thực hiện tìm kiếm Google.</td>
+                    </tr>
+                    <tr>
+                        <td>Enable Google Search during Warm-up</td>
+                        <td>Bật/tắt tìm kiếm Google trong quá trình làm nóng.</td>
+                    </tr>
+                    <tr>
+                        <td>Keywords (one per line)</td>
+                        <td>Danh sách các từ khóa để tìm kiếm trên Google.</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Searches</td>
+                        <td>Số lượng từ khóa sẽ được chọn ngẫu nhiên từ danh sách để thực hiện tìm kiếm.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="note">Nút "Save" sẽ lưu các thay đổi vào file <code>midjourney_config.json</code>.</p>
+            
+            <h3 id="ch-json-file">4.4. File <code>midjourney_config.json</code></h3>
+            <p>Đây là file trung tâm chứa tất cả các cấu hình của ứng dụng. Các cửa sổ GUI ở trên thực chất là giao diện để chỉnh sửa file này một cách trực quan. Bạn cũng có thể chỉnh sửa trực tiếp file JSON này nếu muốn, nhưng hãy cẩn thận với cú pháp.</p>
+            <p>Một số cài đặt quan trọng khác trong file JSON mà có thể không có giao diện trực tiếp hoặc ít thay đổi:</p>
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Khóa JSON</th>
+                        <th>Mô Tả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>delete_auto_created_profile_on_worker_stop</code></td>
+                        <td>(<code>true</code>/<code>false</code>) Nếu <code>true</code>, các profile Chrome được tạo tự động sẽ bị xóa khi worker tương ứng dừng lại (ví dụ: do lỗi, hoàn thành, hoặc xoay vòng).</td>
+                    </tr>
+                    <tr>
+                        <td><code>chrome_version_main</code></td>
+                        <td>(Số nguyên hoặc <code>null</code>) Chỉ định phiên bản chính của Chrome (ví dụ: <code>121</code>) để <code>undetected_chromedriver</code> sử dụng. Nếu <code>null</code>, thư viện sẽ tự phát hiện.</td>
+                    </tr>
+                    <tr>
+                        <td><code>rotate_worker_on_captcha</code></td>
+                        <td>(<code>true</code>/<code>false</code>) Nếu <code>true</code>, khi gặp CAPTCHA, worker hiện tại sẽ dừng và một worker mới (với profile/proxy mới nếu có) sẽ được khởi động (sau thời gian tạm dừng).</td>
+                    </tr>
+                     <tr>
+                        <td><code>mark_proxy_suspicious_on_captcha</code></td>
+                        <td>(<code>true</code>/<code>false</code>) Nếu <code>true</code> và đang sử dụng proxy, proxy đó sẽ được đánh dấu là "nghi ngờ" hoặc "không hoạt động" trong Proxy Pool khi gặp CAPTCHA.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="quan-ly-proxy">
+            <h2>5. Quản Lý Proxy (<code>proxy_pool_gui.py</code> & <code>proxy_pool_manager.py</code>)</h2>
+            <p>Cửa sổ "Proxy Pool" cho phép bạn quản lý danh sách các proxy sẽ được sử dụng bởi các worker.</p>
+            <img src="placeholder_gui_proxy_pool.png" alt="Proxy Pool Window - Placeholder Image">
+
+            <h3 id="proxy-cau-hinh-sd">5.1. Cấu Hình Sử Dụng Proxy Pool</h3>
+            <p>Phần này nằm ở đầu cửa sổ Proxy Pool, cho phép bạn cấu hình cách các worker sẽ sử dụng proxy từ pool.</p>
+            <table class="config-table">
+                <thead>
+                    <tr>
+                        <th>Mục Cấu Hình</th>
+                        <th>Mô Tả</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Sử dụng Proxy Pool cho Worker</td>
+                        <td>Bật/tắt việc sử dụng proxy từ pool cho các worker Auto Midjourney. Nếu tắt, worker sẽ chạy với IP trực tiếp của máy.</td>
+                    </tr>
+                    <tr>
+                        <td>Chiến lược xoay vòng (Rotation Strategy)</td>
+                        <td><ul><li><code>Round Robin</code>: Lần lượt sử dụng các proxy có sẵn.</li><li><code>Random</code>: Chọn ngẫu nhiên một proxy có sẵn.</li></ul> Ưu tiên proxy "Chưa test", sau đó đến "Hoạt động", rồi đến "Nghi ngờ".</td>
+                    </tr>
+                    <tr>
+                        <td>Thử lại tối đa khi lỗi (Max Retries on Failure)</td>
+                        <td>Số lần worker sẽ thử lại với proxy khác nếu proxy hiện tại gặp lỗi kết nối (chưa được triển khai đầy đủ trong logic worker hiện tại, chủ yếu áp dụng cho việc lấy proxy từ pool).</td>
+                    </tr>
+                    <tr>
+                        <td>Cooldown khi lỗi (giây) (Cooldown on Failure)</td>
+                        <td>Thời gian (giây) một proxy "Không hoạt động" sẽ bị bỏ qua trước khi được xem xét sử dụng lại.</td>
+                    </tr>
+                    <tr>
+                        <td>Phương thức xác thực (Authentication Method)</td>
+                        <td><ul><li><code>Embedded</code>: Nếu proxy có username/password, thông tin này sẽ được nhúng vào URL proxy (chủ yếu cho HTTP/HTTPS).</li><li><code>Extension</code>: Một extension Chrome tạm thời sẽ được tạo để xử lý xác thực proxy (hữu ích cho SOCKS có xác thực).</li></ul></td>
+                    </tr>
+                    <tr>
+                        <td>Loại Proxy (mặc định) (Default Proxy Type)</td>
+                        <td>Loại proxy mặc định (http, https, socks4, socks5) sẽ được gán cho các proxy import từ file nếu loại không được chỉ định rõ.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <p class="note">Nhấn "Lưu Cài Đặt Sử Dụng Proxy" để lưu các thiết lập này vào <code>midjourney_config.json</code>.</p>
+
+            <h3 id="proxy-import">5.2. Import Proxy</h3>
+            <ul>
+                <li>Nhấn nút "Import từ File (CSV/TXT)".</li>
+                <li>Chọn file chứa danh sách proxy. Định dạng hỗ trợ:
+                    <ul>
+                        <li><strong>CSV:</strong> Mỗi dòng là một proxy. Các cột có thể bao gồm: <code>proxy_string (host:port)</code>, <code>host_override</code>, <code>port_override</code>, <code>username</code>, <code>password</code>, <code>notes</code>, <code>proxy_type</code>. Nếu <code>host_override</code> và <code>port_override</code> được cung cấp, chúng sẽ được ưu tiên hơn <code>proxy_string</code>.
+<pre>
+proxy_string,host_override,port_override,username,password,notes,proxy_type
+1.2.3.4:8080,,,,user1,pass1,Proxy HTTP US,http
+,5.6.7.8,9090,user2,pass2,Proxy SOCKS5 EU,socks5
+9.10.11.12:7070,,,,,,Proxy HTTP Asia (no auth),
+</pre>
+                        </li>
+                        <li><strong>TXT:</strong> Mỗi dòng một proxy. Các phần tử được phân tách bằng dấu phẩy (<code>,</code>) theo thứ tự tương tự CSV. Hoặc chỉ <code>host:port</code>.
+<pre>
+1.2.3.4:8080,user1,pass1,Proxy HTTP US,http
+5.6.7.8:9090,user2,pass2,Proxy SOCKS5 EU,socks5
+9.10.11.12:7070
+</pre>
+                        </li>
+                    </ul>
+                </li>
+                <li>Các proxy import sẽ hiển thị trong bảng "Proxy Vừa Import".</li>
+            </ul>
+
+            <h3 id="proxy-bang-import">5.3. Bảng "Proxy Vừa Import (Chưa Lưu DB)"</h3>
+            <p>Hiển thị các proxy vừa được import từ file. Tại đây bạn có thể:</p>
+            <ul>
+                <li><strong>Test Tất Cả:</strong> Kiểm tra kết nối của tất cả proxy trong danh sách này.</li>
+                <li><strong>Test Đã Chọn:</strong> Kiểm tra proxy đang được chọn.</li>
+                <li><strong>Lưu Proxy Hoạt Động:</strong> Chỉ lưu những proxy có trạng thái "Hoạt động" vào database. Các proxy đã lưu sẽ bị xóa khỏi danh sách import này.</li>
+                <li><strong>Xóa Đã Chọn:</strong> Xóa proxy đang được chọn khỏi danh sách import (không ảnh hưởng database).</li>
+                <li><strong>Xóa Tất Cả:</strong> Xóa tất cả proxy khỏi danh sách import.</li>
+            </ul>
+            <p class="note">Trạng thái proxy sau khi test: "Hoạt động", "Không hoạt động", "Đang test...".</p>
+
+            <h3 id="proxy-bang-db">5.4. Bảng "Proxy Đã Lưu Trong Database"</h3>
+            <p>Hiển thị các proxy đã được lưu trữ trong cơ sở dữ liệu (file <code>proxies.db</code>).</p>
+            <ul>
+                <li><strong>Tải Lại DS:</strong> Làm mới danh sách từ database.</li>
+                <li><strong>Test Tất Cả:</strong> Kiểm tra lại tất cả proxy trong database. Trạng thái và thời gian test cuối cùng sẽ được cập nhật.</li>
+                <li><strong>Test Đã Chọn:</strong> Kiểm tra proxy đang được chọn trong database.</li>
+                <li><strong>Xóa Đã Chọn:</strong> Xóa proxy đang được chọn khỏi database (có xác nhận).</li>
+                <li><strong>Xóa Tất Cả:</strong> Xóa tất cả proxy khỏi database (có xác nhận, <span class="highlight">CẨN THẬN!</span>).</li>
+            </ul>
+        </section>
+
+        <section id="luu-y">
+            <h2>6. Lưu Ý Quan Trọng và Khắc Phục Sự Cố</h2>
+            <ul>
+                <li><strong>Cookies:</strong> Đảm bảo file cookies còn hiệu lực. Nếu gặp lỗi đăng nhập, hãy thử export lại cookies.</li>
+                <li><strong>Đường dẫn file:</strong> Luôn sử dụng đường dẫn tuyệt đối hoặc tương đối chính xác cho các file cấu hình (prompts, cookies, profile directories).</li>
+                <li><strong>Quyền ghi:</strong> Phần mềm cần quyền ghi vào thư mục chứa nó (để tạo file log, database proxy) và thư mục "Profiles Directory".</li>
+                <li><strong>CAPTCHA:</strong> Việc gặp CAPTCHA thường xuyên có thể là dấu hiệu tài khoản Midjourney hoặc IP/proxy của bạn đang bị theo dõi. Hãy điều chỉnh các cài đặt "Config Like Human" và sử dụng proxy chất lượng.</li>
+                <li><strong>File Log (<code>app.log</code>):</strong> Kiểm tra file này để xem các thông báo lỗi chi tiết nếu phần mềm không hoạt động như mong đợi.</li>
+                <li><strong>Xung đột phiên bản:</strong> Nếu <code>undetected_chromedriver</code> gặp vấn đề, hãy thử xóa thư mục <code>undetected_chromedriver</code> trong thư mục cài đặt Python của bạn (thường là trong <code>Lib/site-packages/</code>) để nó tự tải lại phiên bản mới nhất. Hoặc chỉ định <code>chrome_version_main</code> trong <code>midjourney_config.json</code>.</li>
+                <li><strong>Proxy và Headless:</strong> Một số proxy có thể không hoạt động tốt ở chế độ headless.</li>
+                <li><strong>Luồng (Threads):</strong> Các tác vụ như test proxy, import file được chạy trong luồng riêng để không làm treo giao diện. Hãy kiên nhẫn chờ chúng hoàn thành.</li>
+            </ul>
+            <div class="warning">
+                <strong>Cảnh báo:</strong> Việc tự động hóa các dịch vụ trực tuyến có thể vi phạm điều khoản sử dụng của họ. Hãy sử dụng phần mềm một cách có trách nhiệm và tự chịu rủi ro.
+            </div>
+        </section>
+
+        <section id="kich-ban-su-dung">
+            <h2>7. Kịch Bản Sử Dụng Minh Họa</h2>
+            <p>Dưới đây là một số kịch bản sử dụng phổ biến để bạn dễ hình dung cách tận dụng các tính năng của phần mềm.</p>
+
+            <h3 id="kb-co-ban">7.1. Kịch Bản 1: Chạy Batch Prompt Cơ Bản</h3>
+            <p><strong>Mục tiêu:</strong> Gửi một loạt prompt từ file CSV với các cài đặt mặc định, không sử dụng proxy hay các tính năng phức tạp.</p>
+            <ol>
+                <li><strong>Chuẩn bị:</strong>
+                    <ul>
+                        <li>Tạo file <code>prompts.csv</code> với danh sách prompt của bạn.</li>
+                        <li>Chuẩn bị file <code>cookies_midjourney.json</code>.</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Config Auto MJ):</strong>
+                    <ul>
+                        <li>Đặt đúng đường dẫn đến "Prompts File Path" và "Cookies File (JSON)".</li>
+                        <li>Chọn "Tự động tạo Profile mới cho mỗi Worker" (hoặc cung cấp "Current Profile Path" nếu bạn có sẵn profile sạch).</li>
+                        <li>Các mục delay có thể để mặc định ban đầu.</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Giao diện chính - Start Options):</strong>
+                    <ul>
+                        <li><strong>Start Mode:</strong> Chọn "Start From Beginning".</li>
+                        <li><strong>Loop Count:</strong> Đặt là 1 nếu chỉ muốn chạy một lần.</li>
+                        <li><strong>Max Prompts:</strong> Đặt là 0 (không giới hạn) hoặc số lượng prompt bạn muốn xử lý.</li>
+                        <li>Bỏ chọn "Run browser in background (headless)" nếu muốn xem trình duyệt hoạt động.</li>
+                    </ul>
+                </li>
+                <li><strong>Chạy:</strong> Nhấn "Start Auto MJ".</li>
+            </ol>
+            <p class="note">Kịch bản này phù hợp khi bạn muốn nhanh chóng gửi một số lượng nhỏ prompt và không quá lo lắng về việc bị phát hiện hay giới hạn tài khoản.</p>
+
+            <h3 id="kb-nang-cao">7.2. Kịch Bản 2: Chạy Số Lượng Lớn với Proxy và Xoay Vòng Profile</h3>
+            <p><strong>Mục tiêu:</strong> Gửi số lượng lớn prompt, giảm thiểu rủi ro bị giới hạn bằng cách sử dụng proxy và tự động tạo/xoay vòng profile Chrome.</p>
+            <ol>
+                <li><strong>Chuẩn bị:</strong>
+                    <ul>
+                        <li>File <code>prompts.csv</code> với nhiều prompts.</li>
+                        <li>File <code>cookies_midjourney.json</code>.</li>
+                        <li>Danh sách proxy chất lượng, import vào "Proxy Pool".</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình Proxy Pool:</strong>
+                    <ul>
+                        <li>Mở "Proxy Pool".</li>
+                        <li>Import danh sách proxy của bạn. Test và lưu các proxy hoạt động vào DB.</li>
+                        <li>Trong "Cấu Hình Sử Dụng Proxy Pool":
+                            <ul>
+                                <li>Chọn "Sử dụng Proxy Pool cho Worker".</li>
+                                <li>Chọn "Chiến lược xoay vòng" (ví dụ: Round Robin).</li>
+                                <li>Đặt "Cooldown khi lỗi" hợp lý (ví dụ: 300-600 giây).</li>
+                                <li>Chọn "Phương thức xác thực" phù hợp với loại proxy của bạn (thường là "Extension" cho SOCKS có auth).</li>
+                            </ul>
+                        </li>
+                        <li>Lưu cài đặt Proxy Pool.</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Config Auto MJ):</strong>
+                    <ul>
+                        <li>Đảm bảo "Cookies File (JSON)" và "Prompts File Path" đúng.</li>
+                        <li>Chọn "Tự động tạo Profile mới cho mỗi Worker".</li>
+                        <li>Đặt "Max Prompts per Worker" thành một con số hợp lý (ví dụ: 10-50 prompts) để xoay vòng worker/profile/proxy thường xuyên.</li>
+                        <li>Trong "CAPTCHA Handling Strategy", đặt "Max CAPTCHAs per Session" (ví dụ: 3-5) và "Pause Duration" (ví dụ: 30-60 phút).</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Config Like Human - tùy chọn nhưng khuyến khích):</strong>
+                    <ul>
+                        <li>Bật "Enable Random User-Agent", "Enable Random Window Size".</li>
+                        <li>Bật và tùy chỉnh "Random Scrolling Behavior", "Diversified Navigation", "Random Entry Points".</li>
+                    </ul>
+                </li>
+                 <li><strong>Cấu hình (Warm-Up Config - tùy chọn nhưng khuyến khích):</strong>
+                    <ul>
+                        <li>Bật "Enable Profile Warm-up" nếu bạn đang tự động tạo profile mới.</li>
+                        <li>Thêm một vài trang web và từ khóa tìm kiếm Google để làm nóng profile.</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Giao diện chính - Start Options):</strong>
+                    <ul>
+                        <li><strong>Start Mode:</strong> "Start From Beginning" hoặc "Continue Pending Prompts".</li>
+                        <li><strong>Loop Count:</strong> Theo nhu cầu.</li>
+                        <li><strong>Max Prompts:</strong> Đặt giới hạn tổng thể nếu cần.</li>
+                        <li>Nên chọn "Run browser in background (headless)" để tiết kiệm tài nguyên khi chạy số lượng lớn.</li>
+                    </ul>
+                </li>
+                <li><strong>Chạy:</strong> Nhấn "Start Auto MJ".</li>
+            </ol>
+            <p class="note">Kịch bản này phức tạp hơn nhưng giúp tăng tính ổn định và giảm thiểu rủi ro khi chạy tự động hóa trong thời gian dài hoặc với số lượng lớn.</p>
+
+            <h3 id="kb-em">7.3. Kịch Bản 3: Chạy "Êm" với Mô Phỏng Hành Vi Người Dùng Tối Đa</h3>
+            <p><strong>Mục tiêu:</strong> Thực hiện các tác vụ một cách cẩn trọng, tối đa hóa các cài đặt mô phỏng người dùng để tránh bị phát hiện, phù hợp với các tài khoản quan trọng hoặc khi muốn giảm thiểu rủi ro ở mức cao nhất.</p>
+            <ol>
+                <li><strong>Chuẩn bị:</strong> Tương tự Kịch Bản 2, đặc biệt chú trọng proxy chất lượng cao (ít bị đánh dấu).</li>
+                <li><strong>Cấu hình Proxy Pool:</strong> Tương tự Kịch Bản 2.</li>
+                <li><strong>Cấu hình (Config Auto MJ):</strong>
+                    <ul>
+                        <li>Tương tự Kịch Bản 2.</li>
+                        <li>Tăng các giá trị delay trong "Delay Configuration" lên một chút (ví dụ: Min/Max Typing Delay, Post Submit Delay) để hành động chậm hơn.</li>
+                        <li>Giảm "Max Prompts per Worker" xuống thấp hơn (ví dụ: 5-20) để thay đổi IP/profile thường xuyên hơn.</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Config Like Human - <span class="highlight">Rất Quan Trọng</span>):</strong>
+                    <ul>
+                        <li>Bật <span class="highlight">TẤT CẢ</span> các tùy chọn: Random User-Agent, Random Window Size, Random Scrolling, Diversified Navigation, Random Entry Points.</li>
+                        <li>Cung cấp danh sách User-Agent và Window Size đa dạng.</li>
+                        <li>Tinh chỉnh các thông số cuộn chuột (scroll amount, times, pause) để trông tự nhiên.</li>
+                        <li>Cung cấp danh sách URL đa dạng cho Diversified Navigation và Entry Points.</li>
+                        <li>Tăng "Navigation Frequency" cho Diversified Navigation (ví dụ: 20-30%).</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Warm-Up Config):</strong> Bắt buộc bật và cấu hình kỹ lưỡng nếu tự động tạo profile.</li>
+                <li><strong>Cấu hình (Giao diện chính - Start Options):</strong>
+                    <ul>
+                        <li>Chạy số lượng prompt vừa phải mỗi phiên.</li>
+                        <li>Có thể chạy ở chế độ không headless ban đầu để theo dõi, sau đó chuyển sang headless.</li>
+                    </ul>
+                </li>
+                <li><strong>Chạy:</strong> Nhấn "Start Auto MJ". Theo dõi log cẩn thận.</li>
+            </ol>
+            <p class="warning">Ngay cả với các cài đặt mô phỏng tối đa, không có gì đảm bảo 100% không bị phát hiện. Luôn cẩn trọng khi tự động hóa.</p>
+            
+            <h3 id="kb-tiep-tuc">7.4. Kịch Bản 4: Tiếp Tục Phiên Làm Việc Bị Gián Đoạn</h3>
+            <p><strong>Mục tiêu:</strong> Tiếp tục chạy các prompt còn lại từ một phiên làm việc trước đó bị dừng (do lỗi, mất điện, hoặc tự dừng).</p>
+            <ol>
+                <li><strong>Kiểm tra file prompts (<code>prompts.csv</code>):</strong>
+                    <ul>
+                        <li>Mở file CSV và xem cột "status". Các prompt đã hoàn thành sẽ có trạng thái như "Đã gửi lệnh tạo - Loop X". Các prompt chưa chạy hoặc lỗi sẽ có trạng thái trống hoặc ghi chú lỗi.</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình (Giao diện chính - Start Options):</strong>
+                    <ul>
+                        <li><strong>Start Mode:</strong> Chọn <span class="highlight">"Continue Pending Prompts"</span>. Phần mềm sẽ tự động tìm đến prompt đầu tiên có trạng thái trống trong file CSV để bắt đầu.</li>
+                        <li>Các cài đặt khác (Loop Count, Max Prompts) có thể giữ nguyên hoặc điều chỉnh nếu muốn thay đổi so với phiên trước.</li>
+                    </ul>
+                </li>
+                <li><strong>Cấu hình khác:</strong> Đảm bảo các cấu hình trong "Config Auto MJ", "Proxy Pool" (nếu dùng) vẫn đúng như bạn mong muốn cho phiên tiếp tục này.</li>
+                <li><strong>Chạy:</strong> Nhấn "Start Auto MJ".</li>
+            </ol>
+            <p class="note">Đây là cách hiệu quả để không lãng phí công việc đã làm và tiếp tục từ điểm bị gián đoạn.</p>
+        </section>
+
+    </div>
+    <script>
+        // Script to highlight current section and handle submenu toggling
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll("nav#navbar ul li a");
+            const sections = document.querySelectorAll("div.container section");
+            const submenus = document.querySelectorAll("nav#navbar ul.submenu");
+            const navOffset = 70; // Offset for highlighting accuracy
+
+            // Submenu toggling
+            navLinks.forEach(link => {
+                if (link.classList.contains('has-submenu')) {
+                    link.addEventListener('click', function (event) {
+                        // Allow navigation if it's a direct click on parent,
+                        // but also toggle submenu.
+                        // If you want to prevent navigation and only toggle, use event.preventDefault()
+                        // For now, let's allow navigation to the main section.
+                        
+                        const submenu = this.nextElementSibling;
+                        if (submenu && submenu.classList.contains('submenu')) {
+                            submenu.classList.toggle('open');
+                            this.classList.toggle('open'); // For arrow icon change
+                        }
+                    });
+                }
+            });
+
+            // Function to highlight active link
+            function highlightNav() {
+                let currentSectionId = "";
+                let minDistance = Infinity;
+                let closestSectionId = "";
+
+                // Find the section closest to the top of the viewport
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop - navOffset;
+                    const h3elements = section.querySelectorAll('h3[id]');
+                    
+                    if (window.pageYOffset >= sectionTop) {
+                        currentSectionId = section.getAttribute("id"); // Default to main section
+                    }
+
+                    // Check h3 elements within this section
+                    h3elements.forEach(h3 => {
+                        const h3Top = h3.offsetTop - navOffset;
+                        if (window.pageYOffset >= h3Top) {
+                           currentSectionId = h3.getAttribute("id"); // More specific
+                        }
+                    });
+                });
+                
+                // Fallback if no section is actively "current" (e.g. scrolled to top)
+                if (!currentSectionId && sections.length > 0) {
+                     currentSectionId = sections[0].getAttribute("id");
+                }
+
+
+                navLinks.forEach(link => {
+                    link.classList.remove("active-link");
+                    const linkHref = link.getAttribute("href").substring(1);
+                    
+                    if (linkHref === currentSectionId) {
+                        link.classList.add("active-link");
+                        
+                        // If it's a sub-menu item, open its parent menu and highlight parent
+                        const parentUl = link.closest('ul.submenu');
+                        if (parentUl) {
+                            parentUl.classList.add('open');
+                            const parentLink = parentUl.previousElementSibling;
+                            if (parentLink && parentLink.classList.contains('has-submenu')) {
+                                parentLink.classList.add('active-link'); // Highlight parent
+                                parentLink.classList.add('open'); // Ensure arrow is up
+                            }
+                        }
+                    }
+                });
+            }
+
+            window.addEventListener('scroll', highlightNav);
+            highlightNav(); // Initial call
+        });
+    </script>
+</body>
+</html>
